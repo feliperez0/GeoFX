@@ -155,6 +155,7 @@ class TimeZone {
 	private int gmt_offset;
 	private String code;
 	private boolean is_daylight_saving;
+	
 	public String getId() {
 		return id;
 	}
@@ -201,6 +202,7 @@ class Currency {
 class Connection {
 	private int asn;
 	private String isp;
+	
 	public int getAsn() {
 		return asn;
 	}

@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,61 +20,104 @@ public class MainController implements Initializable {
 	
 	GeoServiceIpapi serviceIpapi = new GeoServiceIpapi();
 	
-	@FXML
-    private Label asnLabel;
+	 @FXML
+	    private Label asnLabel;
 
-    @FXML
-    private ImageView banderaImage;
+	    @FXML
+	    private ImageView banderaImage;
 
-    @FXML
-    private Label ciudadLabel;
+	    @FXML
+	    private Label ciudadLabel;
 
-    @FXML
-    private Label hostnameLabel;
+	    @FXML
+	    private CheckBox crawlerCheck;
 
-    @FXML
-    private Label ipAddressLabel;
+	    @FXML
+	    private Label hostnameLabel;
 
-    @FXML
-    private TextField ipText;
+	    @FXML
+	    private Label ipAddressLabel;
 
-    @FXML
-    private Label ispLabel;
+	    @FXML
+	    private TextField ipText;
 
-    @FXML
-    private Label latitudLabel;
+	    @FXML
+	    private Label ispLabel;
 
-    @FXML
-    private Label lenguajeLabel;
+	    @FXML
+	    private Label latitudLabel;
 
-    @FXML
-    private Label localizacionLabel;
+	    @FXML
+	    private Label lenguajeLabel;
 
-    @FXML
-    private Label longitudLabel;
+	    @FXML
+	    private Label localizacionLabel;
 
-    @FXML
-    private Label monedaLabel;
+	    @FXML
+	    private Label longitudLabel;
 
-    @FXML
-    private Label telefonoLabel;
+	    @FXML
+	    private Label monedaLabel;
 
-    @FXML
-    private Label tiempoLabel;
+	    @FXML
+	    private Label potentialLabel;
 
-    @FXML
-    private Label typeLabel;
+	    @FXML
+	    private CheckBox proxyCheck;
 
-    @FXML
-    private BorderPane view;
+	    @FXML
+	    private Label telefonoLabel;
 
-    @FXML
-    private Label zipLabel;
+	    @FXML
+	    private Label threatLabel;
 
-    @FXML
-    void onCheckIp(ActionEvent event) {
+	    @FXML
+	    private Label tiempoLabel;
 
-    }
+	    @FXML
+	    private CheckBox torCheck;
+
+	    @FXML
+	    private Label typeLabel;
+
+	    @FXML
+	    private BorderPane view;
+
+	    @FXML
+	    private Label zipLabel;
+
+	    @FXML
+	    void onCheckIp(ActionEvent event) {
+
+	        GeoIpapiResponse ipApiResponse = serviceIpapi.getIpInfo(ipText.getText());
+			
+			latitudLabel.setText(String.format("%.6f", ipApiResponse.getLatitude()));
+			longitudLabel.setText(String.format("%.6f", ipApiResponse.getLongitude()));
+			localizacionLabel.setText(ipApiResponse.getCountry_name()+" ("+ipApiResponse.getCountry_code()+")");
+			Image flags = new Image(getClass().getResourceAsStream("/flag-icons/64x42/" +ipApiResponse.getCountry_code()+ ".png"));
+			banderaImage.setImage(flags);
+			ciudadLabel.setText(ipApiResponse.getCity());
+			zipLabel.setText(ipApiResponse.getZip());
+//			lenguajeLabel.setText(ipApiResponse.getLocation().getLanguages());
+			tiempoLabel.setText(ipApiResponse.getTime_zone().getCode());
+			telefonoLabel.setText("+"+ipApiResponse.getLocation().getCalling_code());
+			monedaLabel.setText(ipApiResponse.getCurrency().getName()+" ("+ipApiResponse.getCurrency().getSymbol()+")");
+			ipAddressLabel.setText(ipText.getText());
+			ispLabel.setText(ipApiResponse.getConnection().getIsp());
+			typeLabel.setText(ipApiResponse.getType());
+			asnLabel.setText(ipApiResponse.getConnection().getAsn()+"");
+			hostnameLabel.setText(ipApiResponse.getHostname());
+			
+			if(ipApiResponse.getSecurity().isIs_proxy())
+				proxyCheck.setSelected(true);
+			if(ipApiResponse.getSecurity().isIs_tor())
+				torCheck.setSelected(true);
+			if(ipApiResponse.getSecurity().isIs_crawler())
+				crawlerCheck.setSelected(true);
+			
+			threatLabel.setText(ipApiResponse.getSecurity().getThreat_level());
+	    	
+	    }
 
 	public MainController() {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/View.fxml"));
@@ -100,14 +144,22 @@ public class MainController implements Initializable {
 		zipLabel.setText(ipApiResponse.getZip());
 //		lenguajeLabel.setText(ipApiResponse.getLocation().getLanguages());
 		tiempoLabel.setText(ipApiResponse.getTime_zone().getCode());
-		telefonoLabel.setText(ipApiResponse.getLocation().getCalling_code());
-		monedaLabel.setText(ipApiResponse.getCurrency().getName()+" ("+ipApiResponse.getCurrency().getCode()+")");
+		telefonoLabel.setText("+"+ipApiResponse.getLocation().getCalling_code());
+		monedaLabel.setText(ipApiResponse.getCurrency().getName()+" ("+ipApiResponse.getCurrency().getSymbol()+")");
 		ipAddressLabel.setText(ipText.getText());
 		ispLabel.setText(ipApiResponse.getConnection().getIsp());
 		typeLabel.setText(ipApiResponse.getType());
 		asnLabel.setText(ipApiResponse.getConnection().getAsn()+"");
+		hostnameLabel.setText(ipApiResponse.getHostname());
 		
+		if(ipApiResponse.getSecurity().isIs_proxy())
+			proxyCheck.setSelected(true);
+		if(ipApiResponse.getSecurity().isIs_tor())
+			torCheck.setSelected(true);
+		if(ipApiResponse.getSecurity().isIs_crawler())
+			crawlerCheck.setSelected(true);
 		
+		threatLabel.setText(ipApiResponse.getSecurity().getThreat_level());
 
 	}
 
