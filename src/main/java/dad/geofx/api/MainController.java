@@ -89,13 +89,13 @@ public class MainController implements Initializable {
 	@FXML
 	void onCheckIp(ActionEvent event) {
 
-		if(ipText.getText().equals("")) {
+		if (ipText.getText().equals("")) {
 			ipText.setText(service.getIpAddress());
 			changedDates(service.getIpAddress());
 		} else {
 			changedDates(ipText.getText());
 		}
-		
+
 	}
 
 	public MainController() {
@@ -115,24 +115,26 @@ public class MainController implements Initializable {
 		changedDates(service.getIpAddress());
 
 	}
-	
+
 	public void changedDates(String ipAddress) {
-		
-		GeoIpapiResponse ipApiResponse = serviceIpapi.getIpInfo(ipAddress);			
-		
+
+		GeoIpapiResponse ipApiResponse = serviceIpapi.getIpInfo(ipAddress);
+
 		latitudLabel.setText(String.format("%.6f", ipApiResponse.getLatitude()));
 		longitudLabel.setText(String.format("%.6f", ipApiResponse.getLongitude()));
 		localizacionLabel.setText(ipApiResponse.getCountry_name() + " (" + ipApiResponse.getCountry_code() + ")");
-		Image flags = new Image(getClass().getResourceAsStream("/flag-icons/64x42/" + ipApiResponse.getCountry_code() + ".png"));
+		Image flags = new Image(
+				getClass().getResourceAsStream("/flag-icons/64x42/" + ipApiResponse.getCountry_code() + ".png"));
 		banderaImage.setImage(flags);
 		ciudadLabel.setText(ipApiResponse.getCity());
 		zipLabel.setText(ipApiResponse.getZip());
-        lenguajeLabel.setText(ipApiResponse.getLocation().getLanguages().get(0).getName());
+		lenguajeLabel.setText(ipApiResponse.getLocation().getLanguages().get(0).getName());
 		tiempoLabel.setText(ipApiResponse.getTime_zone().getCode());
 		telefonoLabel.setText("+" + ipApiResponse.getLocation().getCalling_code());
-		monedaLabel.setText(ipApiResponse.getCurrency().getName() + " (" + ipApiResponse.getCurrency().getSymbol() + ")");
+		monedaLabel
+				.setText(ipApiResponse.getCurrency().getName() + " (" + ipApiResponse.getCurrency().getSymbol() + ")");
 		ipAddressLabel.setText(ipText.getText());
-		ispLabel.setText(" "+ipApiResponse.getConnection().getIsp());
+		ispLabel.setText(" " + ipApiResponse.getConnection().getIsp());
 		typeLabel.setText(ipApiResponse.getType());
 		asnLabel.setText(ipApiResponse.getConnection().getAsn() + "");
 		hostnameLabel.setText(ipApiResponse.getHostname());
@@ -160,9 +162,9 @@ public class MainController implements Initializable {
 			potentialLabel.setText("Threat level unknown");
 			break;
 		}
-		
+
 	}
-	
+
 	public BorderPane getView() {
 		return view;
 	}
