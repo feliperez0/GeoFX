@@ -3,6 +3,9 @@ package dad.geofx.api;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -89,12 +92,21 @@ public class MainController implements Initializable {
 	@FXML
 	void onCheckIp(ActionEvent event) {
 
-		if (ipText.getText().equals("")) {
-			ipText.setText(service.getIpAddress());
-			changedDates(service.getIpAddress());
-		} else {
-			changedDates(ipText.getText());
-		}
+		Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String ipAddress = ipText.getText();
+                if (ipAddress.equals("")) {
+                    ipAddress = service.getIpAddress();
+                }
+                final String finalIpAddress = ipAddress;
+                Platform.runLater(() -> {
+                    changedDates(finalIpAddress);
+                });
+                return null;
+            }
+        };
+        new Thread(task).start();
 
 	}
 
@@ -110,9 +122,22 @@ public class MainController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		
 		ipText.setText(service.getIpAddress());
 		changedDates(service.getIpAddress());
+		
+		Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String ipAddress = service.getIpAddress();
+                final String finalIpAddress = ipAddress;
+                Platform.runLater(() -> {
+                    changedDates(finalIpAddress);
+                });
+                return null;
+            }
+        };
+        new Thread(task).start();
 
 	}
 
@@ -164,7 +189,7 @@ public class MainController implements Initializable {
 		}
 
 	}
-
+	
 	public BorderPane getView() {
 		return view;
 	}
